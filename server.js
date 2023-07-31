@@ -6,9 +6,12 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const User = require('./models/User'); 
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const history = require('connect-history-api-fallback');
+
+const usersRouter = require('./routes/users'); 
 
 const app = express();
 
@@ -74,6 +77,8 @@ passport.use(new JwtStrategy(opts, async function (jwt_payload, done) {
         return done(err, false);
     }
 }));
+
+app.use('/users', usersRouter); 
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
