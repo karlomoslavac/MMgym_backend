@@ -12,6 +12,7 @@ const bcrypt = require('bcryptjs');
 const history = require('connect-history-api-fallback');
 
 const usersRouter = require('./routes/users'); 
+const gymsRouter = require('./routes/gyms');
 
 const app = express();
 
@@ -79,6 +80,7 @@ passport.use(new JwtStrategy(opts, async function (jwt_payload, done) {
 }));
 
 app.use('/users', usersRouter); 
+app.use('/gyms', gymsRouter);
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
