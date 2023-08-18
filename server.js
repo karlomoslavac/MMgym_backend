@@ -29,7 +29,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 const corsOptions = {
-    origin: 'http://localhost:8080',
+    origin: 'http://localhost:1337',
     credentials: true,
     optionSuccessStatus: 200
 };
