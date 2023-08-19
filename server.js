@@ -29,7 +29,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 const corsOptions = {
-    origin: 'http://localhost:1337',
+    origin: 'https://mmgymfront.onrender.com',
     credentials: true,
     optionSuccessStatus: 200
 };
