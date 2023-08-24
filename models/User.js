@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
-
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -16,6 +15,18 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ['user', 'owner']
+    },
+    selectedGym: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Gym'
+    },
+    selectedTrainer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Trainer'
+    },
+    selectedAppointment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Appointment'
     }
 });
 
