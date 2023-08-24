@@ -18,6 +18,15 @@ const appointmentsRouter = require('./routes/appointments');
 
 const app = express();
 
+const corsOptions = {
+    origin: ['http://localhost:8080', 'https://mmgymfront.onrender.com'], 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
+
 mongoose.connect('mongodb+srv://mm:gym@mmgym.ge4qjrx.mongodb.net/?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.connection.on('connected', () => {
@@ -27,15 +36,6 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on('error', (err) => {
     console.log('Error connecting to database:', err);
 });
-
-const corsOptions = {
-    origin: ['http://localhost:8080', 'https://mmgymfront.onrender.com'], 
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    optionsSuccessStatus: 204
-};
-
-app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.static('public'));
