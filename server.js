@@ -6,12 +6,12 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const User = require('./models/User'); 
+const User = require('./models/User');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const history = require('connect-history-api-fallback');
 
-const usersRouter = require('./routes/users'); 
+const usersRouter = require('./routes/users');
 const gymsRouter = require('./routes/gyms');
 const trainersRouter = require('./routes/trainers');
 const appointmentsRouter = require('./routes/appointments');
@@ -29,7 +29,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 const corsOptions = {
-    origin: ['http://localhost:1337', 'https://mmgymfront.onrender.com'],
+    origin: 'http://localhost:8080',
     credentials: true,
     optionSuccessStatus: 200
 };
@@ -41,6 +41,12 @@ app.use(express.static('public'));
 app.use(history());
 
 app.use(passport.initialize());
+
+// Set cache-control headers for all responses
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store');
+    next();
+});
 
 passport.use(new LocalStrategy(function (username, password, done) {
     User.findOne({ username: username }, function (err, user) {
@@ -81,13 +87,11 @@ passport.use(new JwtStrategy(opts, async function (jwt_payload, done) {
     }
 }));
 
-app.use('/users', usersRouter); 
+app.use('/users', usersRouter);
 app.use('/gyms', gymsRouter);
 app.use('/trainers', trainersRouter);
 app.use('/appointments', appointmentsRouter);
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
 });
