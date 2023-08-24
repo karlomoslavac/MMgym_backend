@@ -28,8 +28,6 @@ mongoose.connection.on('error', (err) => {
     console.log('Error connecting to database:', err);
 });
 
-const cors = require('cors');
-
 const corsOptions = {
     origin: ['http://localhost:8080', 'https://mmgymfront.onrender.com'], 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
