@@ -3,8 +3,8 @@ const express = require('express');
 const router = express.Router();
 const Appointment = require('../models/Appointment');
 const Trainer = require('../models/Trainer');
+const User = require('../models/User');
 
-// provjera je li korisnik vlasnik
 function isOwner(req, res, next) {
     if (req.user.role === 'owner') {
         return next();
@@ -12,7 +12,6 @@ function isOwner(req, res, next) {
     res.status(403).json({ message: 'Permission denied' });
 }
 
-// dohvati sve treninge
 router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
         const appointments = await Appointment.find();
@@ -22,24 +21,19 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
     }
 });
 
-//dohvati sve treninge
-router.get('/trainers/appointments', async (req, res) => {
+router.get('/trainers/:id/appointments', async (req, res) => {
     try {
-        const trainer = await Trainer.findById(req.params.id).populate('appointments');
-        res.json(trainer.appointments);
+        const trainerId = req.params.id;
+        const appointments = await Appointment.find({ trainer: trainerId });
+        res.json(appointments);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-// dodaj novi trening
 router.post('/', passport.authenticate('jwt', { session: false }), isOwner, async (req, res) => {
     try {
-        console.log(req.body); 
-
-        // trener po idu
         const trainer = await Trainer.findById(req.body.trainer);
-        console.log(trainer); 
 
         if (!trainer) {
             return res.status(400).json({ message: 'Trainer not found' });
@@ -52,22 +46,39 @@ router.post('/', passport.authenticate('jwt', { session: false }), isOwner, asyn
 
         const appointment = new Appointment({
             date: date,
-            trainer: trainer._id 
+            trainer: trainer._id
         });
 
-        console.log(appointment, "created successfully");
-
         const newAppointment = await appointment.save();
-        console.log(newAppointment); 
-
         res.status(201).json(newAppointment);
     } catch (err) {
-        console.error(err); 
         res.status(400).json({ message: err.message });
     }
 });
 
-// obriši trening
+router.post('/user-appointments', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    const { userId, trainerId, gymId, appointmentId } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.appointments.push({
+            trainer: trainerId,
+            gym: gymId,
+            appointment: appointmentId
+        });
+
+        await user.save();
+
+        res.status(201).json({ message: 'Appointment saved successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 router.delete('/:id', passport.authenticate('jwt', { session: false }), isOwner, async (req, res) => {
     try {
         await Appointment.findByIdAndDelete(req.params.id);
