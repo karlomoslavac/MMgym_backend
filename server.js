@@ -28,11 +28,15 @@ mongoose.connection.on('error', (err) => {
     console.log('Error connecting to database:', err);
 });
 
+const cors = require('cors');
+
 const corsOptions = {
-    origin: 'http://localhost:8080',
+    origin: ['http://localhost:8080', 'https://mmgymfront.onrender.com'], 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
-    optionSuccessStatus: 200
+    optionsSuccessStatus: 204
 };
+
 app.use(cors(corsOptions));
 
 app.use(express.json());
@@ -42,7 +46,6 @@ app.use(history());
 
 app.use(passport.initialize());
 
-// Set cache-control headers for all responses
 app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-cache, no-store');
     next();
