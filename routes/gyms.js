@@ -3,7 +3,6 @@ const express = require('express');
 const router = express.Router();
 const Gym = require('../models/Gym');
 
-// provjera je li vlasnik korisnik
 function isOwner(req, res, next) {
     if (req.user.role === 'owner') {
         return next();
@@ -11,7 +10,6 @@ function isOwner(req, res, next) {
     res.status(403).json({ message: 'Permission denied' });
 }
 
-// dohvaæanje svih teretana
 router.get('/', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
         const gyms = await Gym.find();
@@ -21,7 +19,6 @@ router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
     }
 });
 
-// dodavanje nove teretane
 router.post('/', (req, res, next) => {
     passport.authenticate('jwt', { session: false }, (err, user, info) => {
         if (err) {
@@ -37,7 +34,6 @@ router.post('/', (req, res, next) => {
             if (err) {
                 return next(err);
             }
-            console.log('User ID:', user._id);
 
             const gym = new Gym({
                 name: req.body.name,
@@ -55,7 +51,6 @@ router.post('/', (req, res, next) => {
     })(req, res, next);
 });
 
-// ažuriranje teretane
 router.put('/:id', passport.authenticate('jwt', { session: false }), isOwner, async (req, res) => {
     let gym;
     try {
@@ -79,7 +74,6 @@ router.put('/:id', passport.authenticate('jwt', { session: false }), isOwner, as
     }
 });
 
-// brisanje teretane
 router.delete('/:id', passport.authenticate('jwt', { session: false }), isOwner, async (req, res) => {
     try {
         const gym = await Gym.findById(req.params.id);
