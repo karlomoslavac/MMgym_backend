@@ -19,7 +19,7 @@ const appointmentsRouter = require('./routes/appointments');
 const app = express();
 
 const corsOptions = {
-    origin: ['http://localhost:8080', 'https://mmgymfront.onrender.com'], 
+    origin: ['http://localhost:8080', 'https://mmgymfrontend.onrender.com'], 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204
