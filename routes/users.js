@@ -16,8 +16,19 @@ router.get('/', passport.authenticate('jwt', { session: false }), isOwner, async
         const users = await User.find()
             .populate('selectedGym', 'name')
             .populate('selectedTrainer', 'name')
-            .populate('selectedAppointment', 'time');
-        res.json(users);
+            .populate({
+                path: 'selectedAppointment',
+                select: 'date', 
+            });
+
+        const usersWithAppointmentDate = users.map(user => {
+            if (user.selectedAppointment && user.selectedAppointment.date) {
+                user.selectedAppointment.date = user.selectedAppointment.date.toISOString();
+            }
+            return user;
+        });
+
+        res.json(usersWithAppointmentDate);
     } catch (err) {
         console.error('Error fetching users:', err);
         res.status(500).json({ message: err.message });
