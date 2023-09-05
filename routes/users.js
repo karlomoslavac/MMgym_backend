@@ -47,11 +47,17 @@ router.post('/:id/selected', async (req, res) => {
         const userId = req.params.id;
         const { selectedGym, selectedTrainer, selectedAppointment } = req.body;
 
-        await User.findByIdAndUpdate(userId, {
-            selectedGym: selectedGym,
-            selectedTrainer: selectedTrainer,
-            selectedAppointment: selectedAppointment
-        });
+        const user = await User.findById(userId);
+
+        if (!user.appointments) {
+            user.appointments = [];
+        }
+
+        user.selectedGym = selectedGym;
+        user.selectedTrainer = selectedTrainer;
+        user.selectedAppointment = selectedAppointment;
+
+        await user.save();
 
         res.status(200).json({ message: 'Selections saved successfully' });
     } catch (error) {
